@@ -227,7 +227,7 @@ export function GuestFlowWrapper({
 
   return (
     <div
-      className="min-h-screen bg-muted/30 py-6 px-4"
+      className="min-h-screen bg-muted/30 py-6 px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))]"
       style={themeColor ? { ["--primary" as string]: themeColor } : undefined}
     >
       {preview && (
@@ -236,7 +236,7 @@ export function GuestFlowWrapper({
         </div>
       )}
       <div className="max-w-lg mx-auto space-y-6">
-        <h1 className="text-2xl font-bold text-center">מתנה ל{ownerDisplayName}</h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-center">מתנה ל{ownerDisplayName}</h1>
 
         {/* פרטים וברכה – כמו Green Invoice: הכל בדף אחד */}
         <Card>
@@ -303,6 +303,7 @@ export function GuestFlowWrapper({
                     type="button"
                     variant={Number(amount) === a ? "default" : "outline"}
                     size="sm"
+                    className="min-h-[44px] min-w-[52px]"
                     onClick={() => setValue("amount", a)}
                   >
                     ₪{a}
@@ -343,9 +344,9 @@ export function GuestFlowWrapper({
                   type="button"
                   onClick={() => selectPayment(pm.id)}
                   disabled={isSubmitting}
-                  className="flex flex-col items-center gap-2 rounded-xl border-2 border-border bg-card p-4 transition-all hover:border-primary hover:bg-primary/5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-border bg-card p-4 min-h-[88px] transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50"
                 >
-                  <PaymentMethodIcon id={pm.id} iconUrl={pm.iconUrl} className="w-12 h-12" />
+                  <PaymentMethodIcon id={pm.id} iconUrl={pm.iconUrl} className="w-12 h-12 shrink-0" />
                   <span className="font-semibold text-sm">{pm.label}</span>
                 </button>
               ))}
@@ -383,7 +384,7 @@ export function GuestFlowWrapper({
                     </div>
                   )}
 
-                  <Button variant="outline" className="w-full gap-2" onClick={copyPaymentDetails}>
+                  <Button variant="outline" className="w-full gap-2 min-h-[44px]" onClick={copyPaymentDetails}>
                     {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                     העתק פרטי תשלום (שם, סכום ₪{amountNum})
                   </Button>
@@ -391,7 +392,7 @@ export function GuestFlowWrapper({
                   {hasOpenApp && (
                     <Button
                       variant="default"
-                      className="w-full gap-2"
+                      className="w-full gap-2 min-h-[44px]"
                       onClick={() => openPaymentApp(paymentMethod)}
                     >
                       <ExternalLink className="h-4 w-4" />
@@ -405,13 +406,13 @@ export function GuestFlowWrapper({
                       <p className="text-2xl font-bold tracking-widest text-center select-all" dir="ltr">
                         {receiverPhone}
                       </p>
-                      <Button variant="outline" className="w-full gap-2" onClick={copyReceiverPhone}>
+                      <Button variant="outline" className="w-full gap-2 min-h-[44px]" onClick={copyReceiverPhone}>
                         {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                         העתק מספר
                       </Button>
                       <Button
                         variant="secondary"
-                        className="w-full gap-2"
+                        className="w-full gap-2 min-h-[44px]"
                         onClick={() => {
                           const config = PAYMENT_METHODS_CONFIG.find((c) => c.id === paymentMethod);
                           if (config) window.open(config.webUrl, "_blank");
@@ -430,7 +431,7 @@ export function GuestFlowWrapper({
                   )}
 
                   <Button
-                    className="w-full gap-2"
+                    className="w-full gap-2 min-h-[44px]"
                     variant="secondary"
                     onClick={markPaidAndComplete}
                     disabled={markPaidLoading}

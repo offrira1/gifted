@@ -1,0 +1,11 @@
+# Netlify – Gifted (Next.js 15)
+# https://docs.netlify.com/frameworks/next-js/overview/
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Next.js is auto-detected; OpenNext adapter runs server/API routes

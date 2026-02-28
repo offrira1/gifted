@@ -33,10 +33,10 @@ export function EventPublicPage({ eventId, giftUrl, title, welcomeText, coverMed
 
   return (
     <div
-      className="min-h-screen flex flex-col"
+      className="min-h-screen flex flex-col pb-[env(safe-area-inset-bottom)]"
       style={themeColor ? { ["--primary" as string]: themeColor } : undefined}
     >
-      <div className="relative min-h-[40vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-primary/10 to-background">
+      <div className="relative min-h-[40dvh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-primary/10 to-background">
         {coverMediaUrl && (
           <Image
             src={coverMediaUrl}
