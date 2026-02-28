@@ -37,6 +37,7 @@ export function PaymentMethodIcon({ id, iconUrl, className }: PaymentMethodIconP
         className
       )}
     >
+      {/* eslint-disable-next-line @next/next/no-img-element -- external/data URLs, fixed size icons */}
       <img src={src} alt="" className="w-full h-full object-contain p-1" />
     </span>
   );

@@ -6,7 +6,7 @@ import { isAdmin } from "@/lib/auth-admin";
 
 export async function createClient() {
   if (!isSupabaseConfigured()) {
-    return createMockSupabaseClient() as Awaited<ReturnType<typeof createServerClient>>;
+    return createMockSupabaseClient() as unknown as Awaited<ReturnType<typeof createServerClient>>;
   }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;

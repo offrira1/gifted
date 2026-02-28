@@ -258,7 +258,7 @@ export function GuestFlowWrapper({
                 aria-invalid={!!errors.giver_display_name}
               />
               {errors.giver_display_name && (
-                <p className="text-sm text-destructive" role="alert">{errors.giver_display_name.message}</p>
+                <p className="text-sm text-destructive" role="alert">{String(errors.giver_display_name?.message ?? "")}</p>
               )}
             </div>
             <div className="space-y-2">
@@ -275,7 +275,7 @@ export function GuestFlowWrapper({
               <Label htmlFor="media">תמונה או וידאו (אופציונלי, עד 10MB)</Label>
               <Input id="media" type="file" accept="image/*,video/mp4,video/webm" {...register("media")} />
               {errors.media && (
-                <p className="text-sm text-destructive" role="alert">{errors.media.message}</p>
+                <p className="text-sm text-destructive" role="alert">{String(errors.media?.message ?? "")}</p>
               )}
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -283,14 +283,14 @@ export function GuestFlowWrapper({
                 <Label htmlFor="payer_first_name">שם פרטי (משלם)</Label>
                 <Input id="payer_first_name" {...register("payer_first_name")} aria-invalid={!!errors.payer_first_name} />
                 {errors.payer_first_name && (
-                  <p className="text-sm text-destructive" role="alert">{errors.payer_first_name.message}</p>
+                  <p className="text-sm text-destructive" role="alert">{String(errors.payer_first_name?.message ?? "")}</p>
                 )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="payer_last_name">שם משפחה</Label>
                 <Input id="payer_last_name" {...register("payer_last_name")} aria-invalid={!!errors.payer_last_name} />
                 {errors.payer_last_name && (
-                  <p className="text-sm text-destructive" role="alert">{errors.payer_last_name.message}</p>
+                  <p className="text-sm text-destructive" role="alert">{String(errors.payer_last_name?.message ?? "")}</p>
                 )}
               </div>
             </div>
@@ -322,7 +322,7 @@ export function GuestFlowWrapper({
                 />
               </div>
               {errors.amount && (
-                <p className="text-sm text-destructive" role="alert">{errors.amount.message}</p>
+                <p className="text-sm text-destructive" role="alert">{String(errors.amount?.message ?? "")}</p>
               )}
             </div>
           </CardContent>

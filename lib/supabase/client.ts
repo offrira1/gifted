@@ -3,7 +3,7 @@ import { createMockSupabaseClient, isSupabaseConfigured } from "./mock";
 
 export function createClient() {
   if (!isSupabaseConfigured()) {
-    return createMockSupabaseClient() as ReturnType<typeof createBrowserClient>;
+    return createMockSupabaseClient() as unknown as ReturnType<typeof createBrowserClient>;
   }
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

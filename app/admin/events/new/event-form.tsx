@@ -130,7 +130,9 @@ export function EventForm() {
             <Label htmlFor="cover_media">תמונת קאבר / וידאו קצר (אופציונלי, עד 10MB)</Label>
             <Input id="cover_media" type="file" accept="image/*,video/mp4,video/webm" {...register("cover_media")} />
             {errors.cover_media && (
-              <p className="text-sm text-destructive" role="alert">{errors.cover_media.message}</p>
+              <p className="text-sm text-destructive" role="alert">
+                {String(errors.cover_media?.message ?? "")}
+              </p>
             )}
           </div>
         </CardContent>
