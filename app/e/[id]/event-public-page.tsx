@@ -47,7 +47,7 @@ export function EventPublicPage({ eventId, giftUrl, title, welcomeText, coverMed
             unoptimized={coverMediaUrl.startsWith("data:") || !coverMediaUrl.includes("supabase")}
           />
         )}
-        <div className="relative z-10 container px-4 py-12 text-center">
+        <div className="relative z-10 w-full max-w-4xl mx-auto px-4 py-12 text-center">
           <motion.h1
             className="text-2xl sm:text-3xl font-bold text-foreground mb-4"
             initial={{ opacity: 0, y: 10 }}
@@ -65,7 +65,7 @@ export function EventPublicPage({ eventId, giftUrl, title, welcomeText, coverMed
         </div>
       </div>
 
-      <div className="container px-4 py-8 flex-1 max-w-lg mx-auto">
+      <div className="w-full max-w-lg mx-auto px-4 py-8 flex-1">
         <motion.section
           className="rounded-2xl border bg-card p-6 shadow-sm mb-6"
           initial={{ opacity: 0, y: 20 }}

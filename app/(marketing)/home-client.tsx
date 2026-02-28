@@ -21,7 +21,7 @@ export function HomeClient() {
             <source src="/hero-bg.mp4" type="video/mp4" />
           </video>
         </div>
-        <div className="relative z-10 container px-4 py-16 text-center max-w-4xl">
+        <div className="relative z-10 w-full max-w-4xl mx-auto px-4 py-16 text-center">
           <motion.h1
             className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-4"
             initial={{ opacity: 0, y: 20 }}
@@ -55,7 +55,7 @@ export function HomeClient() {
       </section>
 
       <section className="py-20 bg-muted/40">
-        <div className="container px-4 max-w-5xl">
+        <div className="container max-w-5xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">איך זה עובד?</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {[
@@ -81,7 +81,7 @@ export function HomeClient() {
       </section>
 
       <section className="py-20">
-        <div className="container px-4 max-w-5xl">
+        <div className="container max-w-5xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">יתרונות</h2>
           <ul className="space-y-4 max-w-2xl mx-auto text-muted-foreground">
             {[
@@ -107,7 +107,7 @@ export function HomeClient() {
       </section>
 
       <section className="py-20 bg-muted/40">
-        <div className="container px-4 max-w-3xl text-center">
+        <div className="container max-w-3xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">אבטחה ופרטיות</h2>
           <p className="text-muted-foreground">
             פרטי הבנק נשמרים בצורה מאובטחת ומוצגים רק באישור בעל האירוע. רק אתה רואה את דוחות התשלומים והברכות.
@@ -116,7 +116,7 @@ export function HomeClient() {
       </section>
 
       <section className="py-20">
-        <div className="container px-4 max-w-3xl">
+        <div className="container max-w-3xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">שאלות נפוצות</h2>
           <div className="space-y-6">
             {[
@@ -137,7 +137,7 @@ export function HomeClient() {
       </section>
 
       <footer className="border-t py-8 mt-auto">
-        <div className="container px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="container max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
           <span className="text-sm text-muted-foreground">Gifted – מתנות דיגיטליות לאירועים</span>
           <div className="flex gap-4">
             <Button variant="ghost" size="sm" asChild>

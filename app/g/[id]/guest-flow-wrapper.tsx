@@ -371,7 +371,7 @@ export function GuestFlowWrapper({
                   type="button"
                   onClick={() => selectPayment(pm.id)}
                   disabled={isSubmitting}
-                  className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-border bg-card p-4 min-h-[88px] transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50"
+                  className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-foreground/20 bg-card text-foreground p-4 min-h-[88px] transition-all hover:border-primary hover:bg-primary/10 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50"
                 >
                   <PaymentMethodIcon id={pm.id} iconUrl={pm.iconUrl} className="w-12 h-12 shrink-0" />
                   <span className="font-semibold text-sm">{pm.label}</span>

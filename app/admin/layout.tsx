@@ -28,7 +28,7 @@ export default async function AdminLayout({
               </form>
             </div>
           </header>
-          <main className="flex-1 container py-6 px-4">{children}</main>
+          <main className="flex-1 w-full max-w-4xl mx-auto py-6 px-4">{children}</main>
         </>
       ) : (
         <main className="flex-1">{children}</main>
