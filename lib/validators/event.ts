@@ -32,6 +32,7 @@ export const createEventSchema = z.object({
   welcome_text: z.string().optional(),
   bit_phone: z.string().optional(),
   paybox_phone: z.string().optional(),
+  bit_me_id: z.string().optional(),
   suggested_amounts: z.string().optional(),
   theme_color: z.string().optional(),
   cover_media: z

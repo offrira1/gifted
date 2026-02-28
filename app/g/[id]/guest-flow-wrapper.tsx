@@ -20,6 +20,8 @@ import {
   PAYMENT_METHODS_CONFIG,
   getOpenAppUrl,
   getBitIntentUrl,
+  getBitPaymentPageUrl,
+  getBitMePaymentUrl,
   getPayBoxIntentUrl,
 } from "@/lib/payment-methods";
 import { PaymentMethodIcon } from "@/components/payment-method-icon";
@@ -32,6 +34,8 @@ interface GuestFlowWrapperProps {
   themeColor?: string;
   bitPhone?: string;
   payboxPhone?: string;
+  /** BIT "me" ID – לינק bitpay.co.il/app/me/{id} לפתיחה ישירה לעמוד התשלום */
+  bitMeId?: string;
   /** תצוגה מקדימה – לא שומר מתנה במערכת, מציג הוראות עם נתוני דמה */
   preview?: boolean;
 }
@@ -64,6 +68,7 @@ export function GuestFlowWrapper({
   themeColor,
   bitPhone,
   payboxPhone,
+  bitMeId,
   preview = false,
 }: GuestFlowWrapperProps) {
   const router = useRouter();
@@ -135,8 +140,16 @@ export function GuestFlowWrapper({
       setBankDetails(null);
     }
     if (method === "bit" || method === "paybox") {
-      const text = `מתנה ל${eventTitle} – סכום: ₪${payload.amount} – מזל טוב!`;
-      navigator.clipboard.writeText(text).catch(() => {});
+      if (method === "bit" && bitMeId) {
+        return;
+      }
+      const phone = method === "bit" ? bitPhone : payboxPhone;
+      if (phone) {
+        navigator.clipboard.writeText(phone).catch(() => {});
+      } else {
+        const text = `מתנה ל${eventTitle} – סכום: ₪${payload.amount} – מזל טוב!`;
+        navigator.clipboard.writeText(text).catch(() => {});
+      }
     }
   }
 
@@ -146,14 +159,20 @@ export function GuestFlowWrapper({
     }
   }, [paymentMethod]);
 
-  /** P2P spec: "Gift for [Event Name] – Amount: ₪X – Mazal Tov!" */
+  /** P2P spec: "Gift for [Event Name] – Amount: ₪X – Mazal Tov!"; for BIT/PayBox can copy phone or message */
   function copyPaymentDetails() {
-    const base = `מתנה ל${eventTitle} – סכום: ₪${amount} – מזל טוב!`;
-    const text =
-      paymentMethod === "bank_transfer" && bankDetails
-        ? [base, `מוטב: ${bankDetails.bank_beneficiary_name}, בנק: ${bankDetails.bank_name}, סניף: ${bankDetails.bank_branch}, חשבון: ${bankDetails.bank_account_number}${bankDetails.bank_iban ? `, IBAN: ${bankDetails.bank_iban}` : ""}`].join("\n")
-        : base;
-    navigator.clipboard.writeText(text);
+    if (paymentMethod === "bit" && bitPhone) {
+      navigator.clipboard.writeText(bitPhone);
+    } else if (paymentMethod === "paybox" && payboxPhone) {
+      navigator.clipboard.writeText(payboxPhone);
+    } else {
+      const base = `מתנה ל${eventTitle} – סכום: ₪${amount} – מזל טוב!`;
+      const text =
+        paymentMethod === "bank_transfer" && bankDetails
+          ? [base, `מוטב: ${bankDetails.bank_beneficiary_name}, בנק: ${bankDetails.bank_name}, סניף: ${bankDetails.bank_branch}, חשבון: ${bankDetails.bank_account_number}${bankDetails.bank_iban ? `, IBAN: ${bankDetails.bank_iban}` : ""}`].join("\n")
+          : base;
+      navigator.clipboard.writeText(text);
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }
@@ -171,19 +190,26 @@ export function GuestFlowWrapper({
     setShowFallback(false);
     const config = PAYMENT_METHODS_CONFIG.find((c) => c.id === method);
     if (!config || config.id === "bank_transfer" || config.id === "credit_card") return;
+    const amountNum = Number(watch("amount")) || 0;
     const url = getOpenAppUrl(config);
+    if (method === "bit" && bitMeId) {
+      window.location.href = getBitMePaymentUrl(bitMeId);
+      setTimeout(() => setShowFallback(true), 1500);
+      return;
+    }
     if (method === "bit") {
       const isAndroid = /Android/i.test(navigator.userAgent);
       if (isAndroid) {
-        window.location.href = getBitIntentUrl();
+        window.location.href = getBitIntentUrl(bitPhone, amountNum);
       } else {
-        window.open(url, "_blank");
+        const bitUrl = getBitPaymentPageUrl(bitPhone, amountNum);
+        window.location.href = bitUrl;
       }
       setTimeout(() => setShowFallback(true), 1500);
     } else if (method === "paybox") {
       const isAndroid = /Android/i.test(navigator.userAgent);
       if (isAndroid) {
-        window.location.href = getPayBoxIntentUrl();
+        window.location.href = getPayBoxIntentUrl(payboxPhone, amountNum);
       } else {
         window.open(url, "_blank");
       }
@@ -224,6 +250,7 @@ export function GuestFlowWrapper({
   const hasOpenApp = paymentMethod && paymentMethod !== "bank_transfer" && paymentMethod !== "credit_card";
   const showFallbackUI = showFallback && paymentMethod && (paymentMethod === "bit" || paymentMethod === "paybox");
   const receiverPhone = paymentMethod === "bit" ? bitPhone : paymentMethod === "paybox" ? payboxPhone : null;
+  const bitWithMeLink = paymentMethod === "bit" && bitMeId;
 
   return (
     <div
@@ -384,10 +411,33 @@ export function GuestFlowWrapper({
                     </div>
                   )}
 
-                  <Button variant="outline" className="w-full gap-2 min-h-[44px]" onClick={copyPaymentDetails}>
-                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    העתק פרטי תשלום (שם, סכום ₪{amountNum})
-                  </Button>
+                  {paymentMethod === "bit" && bitMeId && (
+                    <div className="rounded-lg bg-primary/10 border border-primary/20 p-4 text-sm space-y-1">
+                      <p className="font-semibold">לינק BIT הוגדר לאירוע.</p>
+                      <p className="text-muted-foreground">
+                        לחץ &quot;פתח ב־BIT&quot; → ייפתח עמוד התשלום למקבל/ת. הזן סכום {formatCurrency(amountNum)} ולחץ שלח.
+                      </p>
+                    </div>
+                  )}
+                  {(paymentMethod === "bit" || paymentMethod === "paybox") && receiverPhone && !(paymentMethod === "bit" && bitMeId) && (
+                    <div className="rounded-lg bg-primary/10 border border-primary/20 p-4 text-sm space-y-1">
+                      <p className="font-semibold">המספר הועתק ללוח.</p>
+                      <p className="text-muted-foreground">
+                        1. לחץ למטה על &quot;פתח ב־{PAYMENT_LABELS[paymentMethod]}&quot; → 2. באפליקציה הדבק בשדה &quot;אל&quot; (המספר כבר מוכן) → 3. הזן סכום {formatCurrency(amountNum)} → 4. לחץ שלח
+                      </p>
+                    </div>
+                  )}
+
+                  {!(paymentMethod === "bit" && bitMeId) && (
+                    <Button variant="outline" className="w-full gap-2 min-h-[44px]" onClick={copyPaymentDetails}>
+                      {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                      {paymentMethod === "bit" && bitPhone
+                        ? "העתק מספר מקבל/ת"
+                        : paymentMethod === "paybox" && payboxPhone
+                          ? "העתק מספר מקבל/ת"
+                          : `העתק פרטי תשלום (שם, סכום ₪${amountNum})`}
+                    </Button>
+                  )}
 
                   {hasOpenApp && (
                     <Button
@@ -400,27 +450,51 @@ export function GuestFlowWrapper({
                     </Button>
                   )}
 
-                  {showFallbackUI && receiverPhone && (
+                  {showFallbackUI && (receiverPhone || bitWithMeLink) && (
                     <div className="rounded-lg border-2 border-dashed border-muted-foreground/40 bg-muted/50 p-4 space-y-3">
-                      <p className="text-sm font-medium text-muted-foreground">לא נפתח? העתק את מספר הטלפון וחפש באפליקציה:</p>
-                      <p className="text-2xl font-bold tracking-widest text-center select-all" dir="ltr">
-                        {receiverPhone}
-                      </p>
-                      <Button variant="outline" className="w-full gap-2 min-h-[44px]" onClick={copyReceiverPhone}>
-                        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                        העתק מספר
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        className="w-full gap-2 min-h-[44px]"
-                        onClick={() => {
-                          const config = PAYMENT_METHODS_CONFIG.find((c) => c.id === paymentMethod);
-                          if (config) window.open(config.webUrl, "_blank");
-                        }}
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        פתח אפליקציה ידנית
-                      </Button>
+                      {bitWithMeLink ? (
+                        <>
+                          <p className="text-sm font-medium text-muted-foreground">לא נפתח? נסה ללחוץ שוב או לפתוח את הלינק ידנית:</p>
+                          <Button
+                            variant="secondary"
+                            className="w-full gap-2 min-h-[44px]"
+                            onClick={() => {
+                              const am = Number(amount) || 0;
+                              window.location.href = getBitMePaymentUrl(bitMeId!);
+                            }}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            פתח לינק BIT
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-sm font-medium text-muted-foreground">לא נפתח? העתק את מספר הטלפון וחפש באפליקציה:</p>
+                          <p className="text-2xl font-bold tracking-widest text-center select-all" dir="ltr">
+                            {receiverPhone}
+                          </p>
+                          <Button variant="outline" className="w-full gap-2 min-h-[44px]" onClick={copyReceiverPhone}>
+                            {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                            העתק מספר
+                          </Button>
+                          <Button
+                            variant="secondary"
+                            className="w-full gap-2 min-h-[44px]"
+                            onClick={() => {
+                              if (paymentMethod === "bit") {
+                                const am = Number(amount) || 0;
+                                window.location.href = getBitPaymentPageUrl(receiverPhone ?? undefined, am);
+                              } else {
+                                const config = PAYMENT_METHODS_CONFIG.find((c) => c.id === paymentMethod);
+                                if (config) window.open(config.webUrl, "_blank");
+                              }
+                            }}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            פתח אפליקציה ידנית
+                          </Button>
+                        </>
+                      )}
                     </div>
                   )}
 

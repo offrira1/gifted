@@ -20,6 +20,7 @@ export default async function GuestFlowPage({ params }: { params: Promise<{ id: 
       themeColor={event.theme_color ?? undefined}
       bitPhone={event.bit_phone ?? undefined}
       payboxPhone={event.paybox_phone ?? undefined}
+      bitMeId={event.bit_me_id ?? undefined}
     />
   );
 }

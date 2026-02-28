@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS public.events (
   cover_media_url TEXT,
   bit_phone TEXT,
   paybox_phone TEXT,
+  bit_me_id TEXT,
   suggested_amounts INTEGER[] DEFAULT ARRAY[100, 200, 500, 1000],
   theme_color TEXT DEFAULT '#c41e5a',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),

@@ -38,6 +38,12 @@ export async function createEvent(input: CreateEventInput & { cover_media_url?: 
       cover_media_url: input.cover_media_url || null,
       bit_phone: input.bit_phone ? input.bit_phone.trim().replace(/\D/g, "").slice(0, 20) : null,
       paybox_phone: input.paybox_phone ? input.paybox_phone.trim().replace(/\D/g, "").slice(0, 20) : null,
+      bit_me_id: (() => {
+        const raw = input.bit_me_id?.trim();
+        if (!raw) return null;
+        const match = raw.match(/app\/me\/([A-Za-z0-9-]+)/i) || raw.match(/^([A-Za-z0-9-]{20,80})$/);
+        return match ? match[1].slice(0, 80) : raw.slice(0, 80);
+      })(),
       suggested_amounts: input.suggested_amounts
         ? input.suggested_amounts.split(",").map((n) => parseInt(n.trim(), 10)).filter((n) => !isNaN(n) && n >= 10).slice(0, 8)
         : [100, 200, 500, 1000],
@@ -124,7 +130,7 @@ export async function getEventById(id: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("events")
-    .select("id, type, owner_display_name, owner_email, owner_phone, event_date, location, welcome_text, cover_media_url, bit_phone, paybox_phone, suggested_amounts, theme_color, created_at")
+    .select("id, type, owner_display_name, owner_email, owner_phone, event_date, location, welcome_text, cover_media_url, bit_phone, paybox_phone, bit_me_id, suggested_amounts, theme_color, created_at")
     .eq("id", id)
     .single();
 

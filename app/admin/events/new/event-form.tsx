@@ -172,16 +172,30 @@ export function EventForm() {
             <Label htmlFor="private_area_password">סיסמה לאזור אישי (אופציונלי)</Label>
             <Input id="private_area_password" type="password" {...register("private_area_password")} />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t">
+          <div className="space-y-4 pt-2 border-t">
             <div className="space-y-2">
-              <Label htmlFor="bit_phone">טלפון ל-BIT (מקבל מתנות)</Label>
-              <Input id="bit_phone" type="tel" {...register("bit_phone")} placeholder="05xxxxxxxx" />
-              <p className="text-xs text-muted-foreground">מספר שאליו ישלחו אורחים ב-BIT</p>
+              <Label htmlFor="bit_me_id">לינק BIT – עמוד תשלום ישיר (מומלץ)</Label>
+              <Input
+                id="bit_me_id"
+                {...register("bit_me_id")}
+                placeholder="https://www.bitpay.co.il/app/me/E6C44E6B-21EB-0CCA-A6D1-682AD169956A77A1"
+                className="font-mono text-sm"
+              />
+              <p className="text-xs text-muted-foreground">
+                העתק מהאפליקציה את הלינק &quot;אלי&quot; / &quot;עמוד התשלום שלי&quot; – האורח ייפתח ישירות לעמוד התשלום בביט
+              </p>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="paybox_phone">טלפון ל-PayBox (מקבל מתנות)</Label>
-              <Input id="paybox_phone" type="tel" {...register("paybox_phone")} placeholder="05xxxxxxxx" />
-              <p className="text-xs text-muted-foreground">מספר שאליו ישלחו אורחים ב-PayBox</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="bit_phone">טלפון ל-BIT (גיבוי אם אין לינק)</Label>
+                <Input id="bit_phone" type="tel" {...register("bit_phone")} placeholder="05xxxxxxxx" />
+                <p className="text-xs text-muted-foreground">מספר להדבקה אם לא הוגדר לינק BIT</p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="paybox_phone">טלפון ל-PayBox (מקבל מתנות)</Label>
+                <Input id="paybox_phone" type="tel" {...register("paybox_phone")} placeholder="05xxxxxxxx" />
+                <p className="text-xs text-muted-foreground">מספר שאליו ישלחו אורחים ב-PayBox</p>
+              </div>
             </div>
           </div>
         </CardContent>

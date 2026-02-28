@@ -13,8 +13,10 @@ export interface PaymentMethodConfig {
 }
 
 /**
- * BIT – לינק לאפליקציה / לאתר. אין Deep Link רשמי ציבורי.
- * https://www.bitpay.co.il/app
+ * BIT – לינק לאפליקציה / לאתר.
+ * חברות (חשבונית ירוקה, Hyp וכו') משתמשות ב-Grow (Meshulam) – יוצרות לינק תשלום חד-פעמי דרך API.
+ * אנחנו מנסים intent/URL עם פרמטרים (phone, amount); אם ביט תומכת – ייפתח מסך השליחה עם השדות מוכנים.
+ * אופציונלי: אינטגרציה עם Grow לבעלי אירוע שהם סולקים – createPaymentProcess → לינק שפותח את ביט עם הסכום.
  */
 const BIT_APP = "https://www.bitpay.co.il/app";
 const BIT_ANDROID = "https://play.google.com/store/apps/details?id=com.bnhp.payments.paymentsapp";
@@ -98,11 +100,46 @@ export function getOpenAppUrl(config: PaymentMethodConfig): string {
   return config.webUrl;
 }
 
-/** Android: try to open BIT app (custom scheme); fallback to webUrl after timeout */
-export function getBitIntentUrl(): string {
-  return "intent://pay#Intent;scheme=bit;package=com.bnhp.payments.paymentsapp;S.browser_fallback_url=https%3A%2F%2Fwww.bitpay.co.il%2Fapp;end";
+const BIT_ME_BASE = "https://www.bitpay.co.il/app/me";
+const BIT_FALLBACK = "https://www.bitpay.co.il/app";
+const PAYBOX_FALLBACK = "https://payboxapp.com";
+
+/** BIT "me" link – פתיחת עמוד התשלום למקבל. פותחים בנייד → ביט נפתח ישירות. בלי amount (ביט לא תומכת). */
+export function getBitMePaymentUrl(bitMeId: string): string {
+  return `${BIT_ME_BASE}/${encodeURIComponent(bitMeId.trim())}`;
 }
 
-export function getPayBoxIntentUrl(): string {
-  return "intent://open#Intent;scheme=paybox;package=com.payboxapp;S.browser_fallback_url=https%3A%2F%2Fpayboxapp.com;end";
+/** Android: open BIT app; optional phone & amount in path/query if app supports it */
+export function getBitIntentUrl(phone?: string, amount?: number): string {
+  const fallback = encodeURIComponent(BIT_FALLBACK);
+  let path = "pay";
+  if (phone || (amount != null && amount > 0)) {
+    const params = new URLSearchParams();
+    if (phone) params.set("phone", phone.replace(/\D/g, ""));
+    if (amount != null && amount > 0) params.set("amount", String(amount));
+    path += "?" + params.toString();
+  }
+  return `intent://${path}#Intent;scheme=bit;package=com.bnhp.payments.paymentsapp;S.browser_fallback_url=${fallback};end`;
+}
+
+/** iOS / web: try poalimlinks page with params (may open BIT via universal link) */
+export function getBitPaymentPageUrl(phone?: string, amount?: number): string {
+  const base = "https://bitpay.poalimlinks.co.il/app";
+  if (!phone && (amount == null || amount <= 0)) return base;
+  const params = new URLSearchParams();
+  if (phone) params.set("phone", phone.replace(/\D/g, ""));
+  if (amount != null && amount > 0) params.set("amount", String(amount));
+  return `${base}?${params.toString()}`;
+}
+
+export function getPayBoxIntentUrl(phone?: string, amount?: number): string {
+  const fallback = encodeURIComponent(PAYBOX_FALLBACK);
+  let path = "open";
+  if (phone || (amount != null && amount > 0)) {
+    const params = new URLSearchParams();
+    if (phone) params.set("phone", phone.replace(/\D/g, ""));
+    if (amount != null && amount > 0) params.set("amount", String(amount));
+    path += "?" + params.toString();
+  }
+  return `intent://${path}#Intent;scheme=paybox;package=com.payboxapp;S.browser_fallback_url=${fallback};end`;
 }

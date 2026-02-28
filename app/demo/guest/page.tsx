@@ -14,6 +14,7 @@ export default function DemoGuestPage() {
       themeColor="#c41e5a"
       bitPhone="0501234567"
       payboxPhone="0501234567"
+      bitMeId="E6C44E6B-21EB-0CCA-A6D1-682AD169956A77A1"
       preview
     />
   );
